@@ -79,5 +79,16 @@ class ProjectTest extends TestCase
         ->assertSee($atteributes->description);
     }
 
+    /** @test */
+    public function an_authenticated_user_cannot_view_the_projects_of_others()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $project = Project::factory()->create();
+        $this->get(route('projects.show', $project->id))
+        ->assertStatus(403);
+    }
+
 
 }
