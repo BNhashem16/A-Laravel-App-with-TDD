@@ -39,11 +39,19 @@ class ProjectTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_create_a_project()
+    public function an_authenticated_user_can_create_a_project()
     {
         $this->withoutExceptionHandling();
         $this->actingAs(User::factory()->create());
 
+        $this->get(route('projects.create'))->assertStatus(200);
+    }
+
+    /** @test */
+    public function a_user_can_store_a_project()
+    {
+        $this->withoutExceptionHandling();
+        $this->actingAs(User::factory()->create());
 
         $atteributes = [
             'title' => $this->faker->sentence,
