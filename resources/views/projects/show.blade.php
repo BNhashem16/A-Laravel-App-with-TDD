@@ -1,19 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-
-<body>
-    <ul>
-        <li>{{ $project->title }}</li>
-        <li>{{ $project->description }}</li>
-    </ul>
-
-</body>
-
-</html>
+@extends('layouts.app')
+@section('content')
+    <h1>{{ $project->title }}</h1>
+    <div>{{ $project->description }}</div>
+    <a href="{{ route('projects.edit', $project) }}">Edit</a>
+    <form method="POST" action="{{ route('projects.destroy', $project) }}">
+        @csrf
+        @method('DELETE')
+        <button type="submit">Delete</button>
+    </form>
+@endsection

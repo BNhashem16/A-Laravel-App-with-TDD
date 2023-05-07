@@ -1,20 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
+@section('content')
+    <header class="flex items-center mb-3 pb-4">
+        <div class="flex justify-between items-center w-full">
+            <h3 class="text-grey text-sm font-normal">My Projects</h3>
+            <a href="/projects/create" class="button">New Project</a>
+        </div>
+    </header>
 
-<body>
-    <ul>
-        @foreach ($projects as $project)
-            <li>{{ $project->title }}</li>
-        @endforeach
-    </ul>
-
-</body>
-
-</html>
+    <main class="lg:flex lg:flex-wrap -mx-3">
+        @forelse ($projects as $project)
+            <div class="lg:w-1/3 px-3 pb-6">
+                @include ('projects.card')
+            </div>
+        @empty
+            <div>No Project yet.</div>
+        @endforelse
+    </main>
+@endsection
