@@ -42,7 +42,7 @@ class ProjectTest extends TestCase
     public function an_authenticated_user_can_create_a_project()
     {
         $this->withoutExceptionHandling();
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
         $this->get(route('projects.create'))->assertStatus(200);
     }
@@ -51,7 +51,7 @@ class ProjectTest extends TestCase
     public function a_user_can_store_a_project()
     {
         $this->withoutExceptionHandling();
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
         $atteributes = [
             'title' => $this->faker->sentence,
@@ -67,7 +67,7 @@ class ProjectTest extends TestCase
     /** @test */
     public function a_project_requires_a_title()
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
         $atteributes = Project::factory()->create(['title' => '']);
         $atteributes = $atteributes->toArray();
         $response = $this->post('/projects', $atteributes);

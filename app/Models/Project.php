@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Task;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,5 +21,15 @@ class Project extends Model
     function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
+    }
+
+    function tasks()
+    {
+        return $this->hasMany(Task::class, 'project_id');
+    }
+
+    function addTask($body)
+    {
+        return $this->tasks()->create($body);
     }
 }
