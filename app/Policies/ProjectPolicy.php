@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -65,6 +66,11 @@ class ProjectPolicy
     }
 
     public function viewTask(User $user, Project $project): bool
+    {
+        return $user->is($project->owner);
+    }
+    
+    public function updateTask(User $user, Project $project): bool
     {
         return $user->is($project->owner);
     }

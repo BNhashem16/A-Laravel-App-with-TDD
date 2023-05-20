@@ -17,5 +17,10 @@ class Task extends Model
         return $this->belongsTo(Project::class);
     }
 
+    public function path()
+    {
+        return route('projects.tasks.show', ['project' => $this->project, 'task' => $this]);
+    }
+
     
 }

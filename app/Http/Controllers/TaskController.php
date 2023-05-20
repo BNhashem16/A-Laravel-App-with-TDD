@@ -39,9 +39,9 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Task $task)
+    public function show(Project $project, Task $task)
     {
-        //
+        return view('tasks.show', compact('project', 'task'));
     }
 
     /**
@@ -55,9 +55,16 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTaskRequest $request, Task $task)
+    public function update(UpdateTaskRequest $request, Project $project, Task $task)
     {
-        //
+        $this->authorize('updateTask', $project);
+
+        $data = $request->validated();
+        $data['completed'] = $request->has('completed');
+
+        $task->update($data);
+
+        return route('projects.show', ['project' => $project->id]);
     }
 
     /**

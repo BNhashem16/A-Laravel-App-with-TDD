@@ -10,10 +10,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::resource('projects.tasks', TaskController::class)->only(['store']);
+Route::resource('projects.tasks', TaskController::class)->only(['store', 'update', 'show']);
 Route::resource('projects', ProjectController::class);
 
-Route::post('projects/{project}/tasks', [TaskController::class, 'store'])->name('projects.tasks.store');
+// Route::post('projects/{project}/tasks', [TaskController::class, 'store'])->name('projects.tasks.store');
 
 Auth::routes();
 
