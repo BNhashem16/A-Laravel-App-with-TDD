@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,5 +24,21 @@ class ProjectFactory extends Factory
             'description' => $this->faker->paragraph,
             'owner_id' => User::factory()->create()->id,
         ];
+    }
+
+    public function createTasks(int $count = 1)
+    {
+        return $this->afterCreating(function (Project $project) use ($count) {
+            Task::factory()->count($count)->create([
+                'project_id' => $project->id,
+            ]);
+        });
+    }
+
+    public function ownedBy(User $user)
+    {
+        return $this->state(fn () => [
+            'owner_id' => $user->id,
+        ]);
     }
 }

@@ -30,10 +30,11 @@ class ProjectTaskTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->signIn();
-        $project = auth()->user()->projects()->create(Project::factory()->raw());
+        $project = Project::factory()->createTasks(1)->create();
+
         $attributes = ['body' => 'Test task'];
         $route = route('projects.tasks.store', ['project' => $project->id]);
-        $this->post($route, $attributes);
+        $this->actingAs($project->owner)->post($route, $attributes);
         $this->assertDatabaseHas('tasks', $attributes);
         $this->get(route('projects.show', ['project' => $project]))->assertSee($attributes['body']);
     }
@@ -64,16 +65,13 @@ class ProjectTaskTest extends TestCase
     public function a_task_can_be_updated()
     {
         $this->withoutExceptionHandling();
-        $this->signIn();
-        $project = auth()->user()->projects()->create(Project::factory()->raw());
+        $project = Project::factory()->createTasks(1)->create();
         $data = [
             'body' => 'Test task',
             'completed' => true
         ];
 
-        $task = $project->addTask(['body' => 'Test task']);
-        $this->patch(route('projects.tasks.update', ['project' => $project->id, 'task' => $task->id]), $data);
-
+        $this->actingAs($project->owner)->patch(route('projects.tasks.update', ['project' => $project->id, 'task' => $project->tasks[0]->id]), $data);
         $this->assertDatabaseHas('tasks', $data);
     }
 
@@ -81,9 +79,8 @@ class ProjectTaskTest extends TestCase
     public function only_the_owner_of_a_project_may_update_a_task()
     {
         $this->signIn();
-        $project = Project::factory()->create();
-        $task = $project->addTask(['body' => 'Test task']);
-        $this->patch(route('projects.tasks.update', ['project' => $project->id, 'task' => $task->id]), ['body' => 'Changed'])
+        $project = Project::factory()->createTasks(1)->create();
+        $this->patch(route('projects.tasks.update', ['project' => $project->id, 'task' => $project->tasks[0]->id]), ['body' => 'Changed'])
             ->assertStatus(Response::HTTP_FORBIDDEN)
             ->assertForbidden();
         $this->assertDatabaseMissing('tasks', ['body' => 'Changed']);
