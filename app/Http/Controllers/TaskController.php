@@ -29,6 +29,8 @@ class TaskController extends Controller
     
     public function store(StoreTaskRequest $request, Project $project)
     {
+        $this->authorize('viewTask', $project);
+
         $project->addTask($request->validated());
 
         return route('projects.show', ['project' => $project->id]);

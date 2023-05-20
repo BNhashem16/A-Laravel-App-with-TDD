@@ -14,6 +14,17 @@ class ProjectTaskTest extends TestCase
     use WithFaker;
 
     /** @test */
+    public function guests_cannot_add_tasks_to_projects()
+    {
+
+        $project = Project::factory()->create();
+
+        $this->post(route('projects.tasks.store', ['project' => $project->id]))
+        ->assertRedirect('login')
+        ->assertStatus(302);
+    }
+
+    /** @test */
     public function a_project_can_have_tasks()
     {
         $this->withoutExceptionHandling();
@@ -27,6 +38,18 @@ class ProjectTaskTest extends TestCase
     }
 
     /** @test */
+    public function only_the_owner_of_a_project_may_add_tasks()
+    {
+        $this->signIn();
+        $project = Project::factory()->create();
+
+        $this->post(route('projects.tasks.store', ['project' => $project->id]), ['body' => 'Test task'])
+            ->assertStatus(403)
+            ->assertForbidden();
+        $this->assertDatabaseMissing('tasks', ['body' => 'Test task']);
+    }
+
+    /** @test */
     public function a_task_requires_a_body()
     {
         $this->signIn();
@@ -36,13 +59,6 @@ class ProjectTaskTest extends TestCase
         $this->post($route, $attributes)->assertSessionHasErrors('body');
     }
 
-    /** @test */
-    public function only_the_owner_of_a_project_may_add_tasks()
-    {
-        $this->signIn();
-        $project = Project::factory()->create(['owner_id' => auth()->id()]);
-        $this->post(route('projects.tasks.store', ['project' => $project->id]), ['body' => 'Test task']);
-        $this->assertDatabaseHas('tasks', ['body' => 'Test task']);
-    }
+  
 
 }

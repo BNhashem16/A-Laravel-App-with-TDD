@@ -63,4 +63,9 @@ class ProjectPolicy
     {
         //
     }
+
+    public function viewTask(User $user, Project $project): bool
+    {
+        return $user->is($project->owner);
+    }
 }
