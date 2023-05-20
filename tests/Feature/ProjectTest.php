@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class ProjectTest extends TestCase
@@ -55,13 +56,43 @@ class ProjectTest extends TestCase
 
         $atteributes = [
             'title' => $this->faker->sentence,
-            'description' => $this->faker->paragraph,
-            'owner_id' => auth()->id()
+            'description' => $this->faker->sentence,
+            'owner_id' => auth()->id(),
+            'notes' => $this->faker->paragraph,
         ];
 
-        $this->post('/projects', $atteributes);
+        $this->post(route('projects.store'), $atteributes);
+        $project = Project::where($atteributes)->first();
         $this->assertDatabaseHas('projects', $atteributes);
-        $this->get('/projects')->assertSee($atteributes['title']);
+        $this->get(route('projects.show', ['project' => $project]))->assertSee($atteributes['title']);
+        $this->isInstanceOf(Project::class, $project);
+    }
+
+    /** @test */
+    public function a_user_can_update_a_project()
+    {
+        $this->withoutExceptionHandling();
+        $this->signIn();
+        $data = ['title' => 'Changed', 'description' => 'Changed', 'notes' => 'Changed'];
+        $project = auth()->user()->projects()->create($data);
+        $route = route('projects.update', ['project' => $project->id]);
+        $updateProject = $this->patch($route, $data)->assertRedirect($project->path());
+        $this->assertDatabaseHas('projects', $data);
+        $this->isInstanceOf(Project::class, $project);
+        $this->assertEquals($data['title'], $project->title);
+        $showProject = $this->get(route('projects.show', ['project' => $project->id]));
+    }
+
+    /** @test */
+    public function an_authenticated_user_cannot_update_the_projects_of_others()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+        $project = Project::factory()->create();
+        $route = route('projects.update', ['project' => $project->id]);
+        $data = ['title' => 'Changed', 'description' => 'Changed', 'notes' => 'Changed'];
+        $this->patch($route, $data)->assertStatus(Response::HTTP_FORBIDDEN);
+        $this->assertDatabaseMissing('projects', $data);
     }
 
     /** @test */

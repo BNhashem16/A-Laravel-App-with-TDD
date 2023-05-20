@@ -59,7 +59,13 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $this->authorize('update', $project);
+        
+        $project->update($request->validated());
+        
+        session()->flash('success', 'Project updated successfully');
+        
+        return redirect()->route('projects.show', ['project' => $project->id]);
     }
 
     /**

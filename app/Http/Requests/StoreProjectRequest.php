@@ -17,6 +17,7 @@ class StoreProjectRequest extends FormRequest
         return [
             'title' => ['required'],
             'description' => ['required'],
+            'notes' => ['nullable'],
         ];
     }
 }
