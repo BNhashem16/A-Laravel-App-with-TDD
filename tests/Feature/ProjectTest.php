@@ -73,14 +73,14 @@ class ProjectTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $this->signIn();
-        $data = ['title' => 'Changed', 'description' => 'Changed', 'notes' => 'Changed'];
+        $data = ['title' => 'Changed title', 'description' => 'Changed description', 'notes' => 'Changed notes'];
         $project = auth()->user()->projects()->create($data);
         $route = route('projects.update', ['project' => $project->id]);
         $updateProject = $this->patch($route, $data)->assertRedirect($project->path());
         $this->assertDatabaseHas('projects', $data);
         $this->isInstanceOf(Project::class, $project);
         $this->assertEquals($data['title'], $project->title);
-        $showProject = $this->get(route('projects.show', ['project' => $project->id]));
+        $this->get(route('projects.edit', ['project' => $project->id]))->assertOk()->assertSee($data['title']);
     }
 
     /** @test */

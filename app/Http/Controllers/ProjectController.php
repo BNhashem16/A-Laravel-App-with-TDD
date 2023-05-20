@@ -21,10 +21,7 @@ class ProjectController extends Controller
 
         return view('projects.index', compact('projects'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         return view('projects.create');
@@ -45,13 +42,10 @@ class ProjectController extends Controller
 
         return view('projects.show', ['project' => $project]);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(Project $project)
     {
-        //
+        return view('projects.edit', ['project' => $project]);
     }
 
     /**
@@ -59,18 +53,12 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        $this->authorize('update', $project);
-        
         $project->update($request->validated());
-        
         session()->flash('success', 'Project updated successfully');
         
         return redirect()->route('projects.show', ['project' => $project->id]);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(Project $project)
     {
         //
