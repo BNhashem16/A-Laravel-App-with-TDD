@@ -18,18 +18,30 @@ class Project extends Model
         return route('projects.show', $this->id);
     }
 
-    function owner()
+    public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    function tasks()
+    public function tasks()
     {
         return $this->hasMany(Task::class, 'project_id');
     }
 
-    function addTask($body)
+    public function addTask($body)
     {
         return $this->tasks()->create($body);
+    }
+
+    public function activity()
+    {
+        return $this->hasMany(Activity::class, 'project_id')->latest();
+    }
+
+    public function recordActivity(string $activity)
+    {
+        return $this->activity()->create([
+            'description' => $activity
+        ]);
     }
 }
