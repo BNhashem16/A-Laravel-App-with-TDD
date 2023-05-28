@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -127,6 +128,15 @@ class ProjectTest extends TestCase
         $project = Project::factory()->create();
         $this->get(route('projects.show', $project->id))
         ->assertStatus(403);
+    }
+
+    /** @test */
+    public function it_can_be_completed()
+    {
+        $this->withoutExceptionHandling();
+        $task = Task::factory()->create();
+        $task->complete();
+        $this->assertTrue($task->fresh()->completed);
     }
 
 

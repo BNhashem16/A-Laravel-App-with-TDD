@@ -41,4 +41,9 @@ class ProjectFactory extends Factory
             'owner_id' => $user->id,
         ]);
     }
+
+    public function withTasks(int $count = 1)
+    {
+        return $this->hasTasks($count);
+    }
 }

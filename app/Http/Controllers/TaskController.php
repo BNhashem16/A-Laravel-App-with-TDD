@@ -62,6 +62,10 @@ class TaskController extends Controller
         $data = $request->validated();
         $data['completed'] = $request->has('completed');
 
+        if($request->has('completed')) {
+            $task->project->recordActivity('completed task');
+        }
+
         $task->update($data);
 
         return route('projects.show', ['project' => $project->id]);

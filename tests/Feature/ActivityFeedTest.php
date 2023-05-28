@@ -13,7 +13,7 @@ class ActivityFeedTest extends TestCase
     use RefreshDatabase;
     
     /** @test */
-    public function creating_a_project_generates_activity()
+    public function creating_a_project_record_activity()
     {
         $project = Project::factory()->create();
         $this->assertCount(1, $project->activity);
@@ -21,13 +21,39 @@ class ActivityFeedTest extends TestCase
     }
 
     /** @test */
-    public function updating_a_project_generates_activity()
+    public function updating_a_project_record_activity()
     {
         $project = Project::factory()->create();
         $project->update(['title' => 'changed']);
         $this->assertCount(2, $project->activity);
         $this->assertEquals('updated', $project->activity->last()->description);
         $this->assertInstanceOf(Activity::class, $project->activity->last());
+    }
+
+    /** @test */
+    public function creating_a_new_task_record_activity()
+    {
+        $this->withoutExceptionHandling();
+        $project = Project::factory()->create();
+        $project->addTask(['body' => 'Some task']);
+        $this->assertCount(2, $project->activity);
+        $this->assertEquals('created task', $project->activity->last()->description);
+        $this->assertInstanceOf(Activity::class, $project->activity->last());
+    }
+
+    /** @test */
+    public function completing_a_new_task_record_activity()
+    {
+        $this->withoutExceptionHandling();
+        $project = Project::factory()->withTasks()->create();
+        $this->actingAs($project->owner)->patch($project->tasks->first()->path(), [
+            'body' => 'foobar',
+            'completed' => true
+        ]);
+        $this->assertCount(3, $project->activity);
+        $this->assertEquals('completed task', $project->activity->last()->description);
+        $this->assertInstanceOf(Activity::class, $project->activity->last());
         
     }
+    
 }
