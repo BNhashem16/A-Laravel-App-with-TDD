@@ -62,8 +62,7 @@ class TaskController extends Controller
         $data = $request->validated();
         $task->update($data);
         
-        $method = $request->has('completed') ? 'complete' : 'inComplete';
-        $task->$method();
+        $request->has('completed') ? $task->complete() : $task->incomplete();
 
         return route('projects.show', ['project' => $project->id]);
     }

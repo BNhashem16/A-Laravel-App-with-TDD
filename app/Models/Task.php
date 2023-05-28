@@ -41,16 +41,5 @@ class Task extends Model
     {
         return route('projects.tasks.show', ['project' => $this->project, 'task' => $this]);
     }
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::created(function ($task) {
-            $task->project->recordActivity('created task');
-        });
-
-    }
-
     
 }
