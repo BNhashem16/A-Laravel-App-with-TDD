@@ -30,6 +30,13 @@ class Task extends Model
         $this->project->recordActivity('completed task');
     }
 
+    public function incomplete()
+    {
+        $this->update(['completed' => false]);
+
+        $this->project->recordActivity('incompleted task');
+    }
+
     public function path()
     {
         return route('projects.tasks.show', ['project' => $this->project, 'task' => $this]);
