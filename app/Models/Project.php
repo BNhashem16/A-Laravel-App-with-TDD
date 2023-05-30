@@ -6,10 +6,13 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Project extends Model
 {
     use HasFactory;
+
+    public $old = [];
 
     protected $guarded = ['id'];
 
@@ -42,7 +45,20 @@ class Project extends Model
     public function recordActivity(string $activity)
     {
         return $this->activity()->create([
-            'description' => $activity
+            'description' => $activity,
+            'changes' => $this->activityChanges($activity),
         ]);
     }
+
+    public function activityChanges($description)
+    {
+        if ($description === 'updated') {
+            return [
+                'before' => Arr::except(array_diff($this->old, $this->getAttributes()), 'updated_at'),
+                
+                'after' => Arr::except($this->getChanges(), 'updated_at'),
+            ];
+        }
+    }
+
 }

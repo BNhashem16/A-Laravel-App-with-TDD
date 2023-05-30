@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(Project::class)->constrained()->cascadeOnDelete();
             $table->nullableMorphs('subject');
             $table->string('description');
+            $table->text('changes')->nullable();
             $table->timestamps();
         });
     }

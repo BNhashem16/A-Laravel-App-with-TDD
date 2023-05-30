@@ -23,6 +23,11 @@ class ProjectObserver
         $project->recordActivity('updated');
     }
 
+    public function updating(Project $project): void
+    {
+        $project->old = $project->getOriginal();
+    }
+
     /**
      * Handle the Project "deleted" event.
      */
