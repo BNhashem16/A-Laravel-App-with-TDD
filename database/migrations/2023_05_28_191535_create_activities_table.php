@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Project::class)->constrained()->cascadeOnDelete();
+            $table->nullableMorphs('subject');
             $table->string('description');
             $table->timestamps();
         });

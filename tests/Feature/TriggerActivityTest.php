@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Activity;
 use App\Models\Project;
+use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -37,8 +38,11 @@ class TriggerActivityTest extends TestCase
         $project = Project::factory()->create();
         $project->addTask(['body' => 'Some task']);
         $this->assertCount(2, $project->activity);
-        $this->assertEquals('created task', $project->activity->last()->description);
-        $this->assertInstanceOf(Activity::class, $project->activity->last());
+
+        $activity = $project->activity->last();
+        $this->assertEquals('created task', $activity->description);
+        $this->assertInstanceOf(Task::class, $activity->subject);
+        
     }
 
     /** @test */
