@@ -21,7 +21,7 @@ class TriggerActivityTest extends TestCase
         $activity = $project->activity->last();
 
         $this->assertNull($activity->changes);
-        $this->assertEquals('created', $activity->description);
+        $this->assertEquals('created_project', $activity->description);
     }
 
     /** @test */
@@ -38,7 +38,7 @@ class TriggerActivityTest extends TestCase
             'before' => ['title' => $originalTitle],
             'after' => ['title' => 'changed']
         ];  
-        $this->assertEquals('updated', $activity->description);
+        $this->assertEquals('updated_project', $activity->description);
         $this->assertEquals($expected, $activity->changes);
         // $this->assertInstanceOf(Project::class, $activity->subject);
         // $this->assertEquals('updated', $project->activity->last()->description);
@@ -54,7 +54,7 @@ class TriggerActivityTest extends TestCase
         $this->assertCount(2, $project->activity);
 
         $activity = $project->activity->last();
-        $this->assertEquals('created task', $activity->description);
+        $this->assertEquals('created_task', $activity->description);
         $this->assertInstanceOf(Task::class, $activity->subject);
         
     }
@@ -63,13 +63,13 @@ class TriggerActivityTest extends TestCase
     public function completing_a_new_task()
     {
         $this->withoutExceptionHandling();
-        $project = Project::factory()->withTasks()->create();
+        $project = Project::factory()->withTasks(1)->create();
         $this->actingAs($project->owner)->patch($project->tasks->first()->path(), [
             'body' => 'foobar',
             'completed' => true
         ]);
-        $this->assertCount(3, $project->activity);
-        $this->assertEquals('completed task', $project->activity->last()->description);
+        $this->assertCount(5, $project->activity);
+        $this->assertEquals('completed_task', $project->activity->last()->description);
         $this->assertInstanceOf(Activity::class, $project->activity->last());
     }
 
