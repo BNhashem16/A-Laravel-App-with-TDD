@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Activity;
 use App\Models\Task;
 use App\Models\User;
 use App\Traits\RecordsActivity;
