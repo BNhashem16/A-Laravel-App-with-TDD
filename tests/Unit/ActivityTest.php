@@ -20,8 +20,16 @@ class ActivityTest extends TestCase
         ]);
         $this->assertInstanceOf(User::class, $project->activity->first()->user);
         $this->assertEquals(auth()->id(), $project->activity->first()->user->id);
-        
-     
+    }
+
+    /** @test */
+    public function it_can_invite_user()
+    {
+        $this->withoutExceptionHandling();
+        $project = Project::factory()->create();
+        $user = User::factory()->create();
+        $project->invite($user);
+        $this->assertTrue($project->members->contains($user));
     }
 
 }

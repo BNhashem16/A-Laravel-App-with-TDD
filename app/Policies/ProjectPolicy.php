@@ -38,7 +38,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project): bool
     {
-        return $user->is($project->owner);
+        return $user->is($project->owner) || $project->members->contains($user);
     }
 
     /**
@@ -67,7 +67,7 @@ class ProjectPolicy
 
     public function viewTask(User $user, Project $project): bool
     {
-        return $user->is($project->owner);
+        return $user->is($project->owner) || $project->members->contains($user);
     }
     
     public function updateTask(User $user, Project $project): bool
