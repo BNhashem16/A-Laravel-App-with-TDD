@@ -83,6 +83,30 @@ class ProjectTest extends TestCase
         $this->assertEquals($data['title'], $project->title);
         $this->get(route('projects.edit', ['project' => $project->id]))->assertOk()->assertSee($data['title']);
     }
+    
+    /** @test */
+    public function a_user_can_delete_a_project()
+    {
+        $this->withoutExceptionHandling();
+        $this->signIn();
+        $project = Project::factory()->create([
+            'owner_id' => auth()->id()
+        ]);
+        $response = $this->actingAs($project->owner)->delete(route('projects.destroy', ['project' => $project]));
+        $response->assertRedirect(route('projects.index'));
+        $this->assertDatabaseMissing('projects', ['id' => $project->id]);
+        
+    }
+    
+    /** @test */
+    public function unauthorized_users_cannot_delete_projects()
+    {
+        $project = Project::factory()->create();
+        $response = $this->delete(route('projects.destroy', ['project' => $project]));
+        $this->signIn();
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+        $this->assertDatabaseHas('projects', ['id' => $project->id]);
+    }
 
     /** @test */
     public function an_authenticated_user_cannot_update_the_projects_of_others()
