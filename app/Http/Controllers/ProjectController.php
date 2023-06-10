@@ -17,7 +17,7 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $projects = Auth::user()->projects()->orderBy('updated_at', 'DESC')->get();
+        $projects = Auth::user()->accessibleProjects();
 
         return view('projects.index', compact('projects'));
     }

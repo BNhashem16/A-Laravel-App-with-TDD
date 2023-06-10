@@ -173,5 +173,18 @@ class ProjectTest extends TestCase
         $this->assertFalse($task->fresh()->completed);
     }
 
+    /** @test */
+    public function a_user_can_see_all_projects_they_have_been_invited_to_on_thier_dashboard()
+    {
+        $this->withoutExceptionHandling();
+        
+        $user = $this->signIn();
+        $project = Project::factory()->create();
+        $project->invite($user);
+        $this->get(route('projects.index'))->assertSee($project->title);
+        
+        
+    }
+
 
 }
