@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\TaskController;
 use App\Models\Activity;
@@ -14,6 +15,7 @@ Route::get('/', function () {
 });
 
 Route::resource('projects.tasks', TaskController::class)->only(['store', 'update', 'show', 'destroy']);
+Route::resource('projects.invitations', InvitationController::class)->only(['store']);
 Route::resource('projects', ProjectController::class);
 
 // Route::post('projects/{project}/tasks', [TaskController::class, 'store'])->name('projects.tasks.store');
