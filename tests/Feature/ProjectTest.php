@@ -52,21 +52,10 @@ class ProjectTest extends TestCase
     /** @test */
     public function a_user_can_store_a_project()
     {
-        $this->withoutExceptionHandling();
         $this->signIn();
-
-        $atteributes = [
-            'title' => $this->faker->sentence,
-            'description' => $this->faker->sentence,
-            'owner_id' => auth()->id(),
-            'notes' => $this->faker->paragraph,
-        ];
-
-        $this->post(route('projects.store'), $atteributes);
-        $project = Project::where($atteributes)->first();
-        $this->assertDatabaseHas('projects', $atteributes);
-        $this->get(route('projects.show', ['project' => $project]))->assertSee($atteributes['title']);
-        $this->isInstanceOf(Project::class, $project);
+        $atteributes = Project::factory()->raw(['owner_id' => auth()->id()]);
+        $response = $this->followingRedirects()->post(route('projects.store'), $atteributes);
+        $response->assertSee($atteributes['title'])->assertSee($atteributes['description'])->assertSee($atteributes['notes']);
     }
 
     /** @test */
@@ -103,9 +92,14 @@ class ProjectTest extends TestCase
     {
         $project = Project::factory()->create();
         $response = $this->delete(route('projects.destroy', ['project' => $project]));
-        $this->signIn();
+        $user = $this->signIn();
         $response->assertStatus(Response::HTTP_FORBIDDEN);
         $this->assertDatabaseHas('projects', ['id' => $project->id]);
+        $project->invite($user);
+        $response = $this->actingAs($user)->delete(route('projects.destroy', ['project' => $project]));
+        $response->assertStatus(Response::HTTP_FORBIDDEN);
+        $this->assertDatabaseHas('projects', ['id' => $project->id]);
+        
     }
 
     /** @test */

@@ -32,13 +32,15 @@ class ProjectPolicy
     {
         //
     }
-
-    /**
-     * Determine whether the user can update the model.
-     */
+    
     public function update(User $user, Project $project): bool
     {
         return $user->is($project->owner) || $project->members->contains($user);
+    }
+    
+    public function manage(User $user, Project $project): bool
+    {
+        return $user->is($project->owner);
     }
 
     /**

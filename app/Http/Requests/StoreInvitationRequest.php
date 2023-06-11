@@ -9,7 +9,7 @@ class StoreInvitationRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return Gate::allows('update', $this->route('project'));
+        return Gate::allows('manage', $this->route('project'));
     }
 
     public function rules(): array
